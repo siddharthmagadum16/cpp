@@ -53,42 +53,18 @@ template<typename T>
 void pvpair(T& vp) { for (int i = 0; i < vp.size(); ++i) cout << '{' << vp[i].first << ", " << vp[i].second << '}' << endl; }
 
 
+// Define a hash function for pair<TreeNode*, int>
+struct pair_hash {
+  template <class T1, class T2>
+  size_t operator()(const std::pair<T1, T2>& p) const {
+    auto h1 = std::hash<T1>{}(p.first);
+    auto h2 = std::hash<T2>{}(p.second);
+    return h1 ^ (h2 << 1); // or use boost::hash_combine
+  }
+};
 
 void testcase(int test) { // testcasesid
-      // Define a hash function for pair<TreeNode*, int>
-      struct pair_hash {
-        template <class T1, class T2>
-        size_t operator()(const std::pair<T1, T2>& p) const {
-          auto h1 = std::hash<T1>{}(p.first);
-          auto h2 = std::hash<T2>{}(p.second);
-          return h1 ^ (h2 << 1); // or use boost::hash_combine
-        }
-      };
 
-      unordered_map<pair<TreeNode*, int>, int, pair_hash> dp;
-
-  int n;
-  cin >> n;
-  vector<int>arr(n), brr(n);
-  unordered_set<int>st1,st2;
-  for(int i = 0; i < n; ++ i) cin >> arr[i];
-  for(int i = 0; i < n; ++ i) cin >> brr[i];
-
-  sort(arr.begin(), arr.end());
-  sort(brr.begin(), brr.end());
-  erase(unique(arr.begin(), arr.end()), arr.end());
-  erase(unique(brr.begin(), brr.end()), brr.end());
-  // for (int i = 0; i < n; ++ i) {
-  //   st1.insert()
-  // }
-
-  if (arr.size() >= 3 or brr.size() >= 3) yes();
-  else no();
-
-
-
-
-  // cout << "Case #" << test << ": " << ans << endl;
   return;
 }
 
@@ -107,6 +83,13 @@ int32_t main() {
 for std::lcm use -std=c++17 to compile locally
 
 g++ *.cpp > log.txt 2>&1
+
+mac:
+brew list gcc
+g++-15 1.cpp
+above uses c++17
+g++-15 -std=c++23 1.cpp
+./a.out
 
 topics:
 
