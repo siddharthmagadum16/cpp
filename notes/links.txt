@@ -1,0 +1,6 @@
+Graph algos at one Place:
+https://leetcode.com/discuss/general-discussion/969327/Graph-Algorithms-One-Place-or-Dijkstra-or-Bellman-Ford-or-Floyd-Warshall-or-Prims-or-Kruskals-or-DSU
+Rabin Karp algorithm uses rolling hash and compares string if hash is matched
+
+For non-connected graph, prims algo cannot find spanning tree
+but kruskals algo can find spanning tree for which become sub-spanning tree
