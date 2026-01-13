@@ -1,93 +1,77 @@
-// Kruskal's algorithm in C++
-
-#include <algorithm>
 #include <iostream>
 #include <vector>
+#include <algorithm>
+
 using namespace std;
 
-#define edge pair<int, int>
-
-class Graph {
-   private:
-  vector<pair<int, edge> > G;  // graph
-  vector<pair<int, edge> > T;  // mst
-  int *parent;
-  int V;  // number of vertices/nodes in graph
-   public:
-  Graph(int V);
-  void AddWeightedEdge(int u, int v, int w);
-  int find_set(int i);
-  void union_set(int u, int v);
-  void kruskal();
-  void print();
-};
-Graph::Graph(int V) {
-  parent = new int[V];
-
-  //i 0 1 2 3 4 5
-  //parent[i] 0 1 2 3 4 5
-  for (int i = 0; i < V; i++)
-    parent[i] = i;
-
-  G.clear();
-  T.clear();
-}
-void Graph::AddWeightedEdge(int u, int v, int w) {
-  G.push_back(make_pair(w, edge(u, v)));
-}
-int Graph::find_set(int i) {
-  // If i is the parent of itself
-  if (i == parent[i])
-    return i;
-  else
-    // Else if i is not the parent of itself
-    // Then i is not the representative of his set,
-    // so we recursively call Find on its parent
-    return find_set(parent[i]);
-}
-
-void Graph::union_set(int u, int v) {
-  parent[u] = parent[v];
-}
-void Graph::kruskal() {
-  int i, uRep, vRep;
-  sort(G.begin(), G.end());  // increasing weight
-  for (i = 0; i < G.size(); i++) {
-    uRep = find_set(G[i].second.first);
-    vRep = find_set(G[i].second.second);
-    if (uRep != vRep) {
-      T.push_back(G[i]);  // add to tree
-      union_set(uRep, vRep);
+struct unionfind {
+    vector<int> p;
+    unionfind(int N) {
+        p = vector<int>(N, -1);
     }
-  }
-}
-void Graph::print() {
-  cout << "Edge :"
-     << " Weight" << endl;
-  for (int i = 0; i < T.size(); i++) {
-    cout << T[i].second.first << " - " << T[i].second.second << " : "
-       << T[i].first;
-    cout << endl;
-  }
-}
+    int root(int x) {
+        if (p[x] < 0) {
+            return x;
+        } else {
+            p[x] = root(p[x]);
+            return p[x];
+        }
+    }
+    bool same(int x, int y) {
+        return root(x) == root(y);
+    }
+    void unite(int x, int y) {
+        x = root(x);
+        y = root(y);
+        if (x != y) {
+            if (p[x] < p[y]) {
+                swap(x, y);
+            }
+            p[y] += p[x];
+            p[x] = y;
+        }
+    }
+};
+
+struct Edge {
+    int u, v, weight;
+    bool operator<(const Edge& other) const {
+        return weight < other.weight;
+    }
+};
+
 int main() {
-  Graph g(6);
-  g.AddWeightedEdge(0, 1, 4);
-  g.AddWeightedEdge(0, 2, 4);
-  g.AddWeightedEdge(1, 2, 2);
-  g.AddWeightedEdge(1, 0, 4);
-  g.AddWeightedEdge(2, 0, 4);
-  g.AddWeightedEdge(2, 1, 2);
-  g.AddWeightedEdge(2, 3, 3);
-  g.AddWeightedEdge(2, 5, 2);
-  g.AddWeightedEdge(2, 4, 4);
-  g.AddWeightedEdge(3, 2, 3);
-  g.AddWeightedEdge(3, 4, 3);
-  g.AddWeightedEdge(4, 2, 4);
-  g.AddWeightedEdge(4, 3, 3);
-  g.AddWeightedEdge(5, 2, 2);
-  g.AddWeightedEdge(5, 4, 3);
-  g.kruskal();
-  g.print();
-  return 0;
+    int N = 4; // Number of vertices
+    vector<Edge> edges = {
+        {0, 1, 10},
+        {0, 2, 6},
+        {0, 3, 5},
+        {1, 3, 15},
+        {2, 3, 4}
+    };
+
+    // Step 1: Sort edges by weight
+    sort(edges.begin(), edges.end());
+
+    unionfind dsu(N);
+    vector<Edge> mst;
+    int mst_weight = 0;
+
+    // Step 2: Iterate through sorted edges
+    for (const auto& e : edges) {
+        if (!dsu.same(e.u, e.v)) {
+            dsu.unite(e.u, e.v);
+            mst.push_back(e);
+            mst_weight += e.weight;
+        }
+    }
+
+    // Output results
+    cout << "Edges in MST:" << endl;
+    for (const auto& e : mst) {
+        cout << e.u << " - " << e.v << " : " << e.weight << endl;
+    }
+    cout << "Total MST Weight: " << mst_weight << endl;
+
+    return 0;
 }
