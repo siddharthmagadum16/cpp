@@ -1,21 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
 
-
-class Solution {
-
-  dp[100][100];
-
-  int solve(int left, int right, int vector<int>&arr, vector<int>&weights, int ind) {
-    int k = weights.size();
-    if (ind == k) return 0;
-    if (dp[left][right] != -1) return dp[left][right];
-    if (left > right) return 0;
-    int op1 = solve(left+1, right, arr, weights, ind+1) + arr[left] * weights[ind];
-    int op2 = solve(left, right - 1, arr, weights, ind + 1) + arr[right] * weights[ind];
-    return dp[left][right] = max(op1, op2);
+int solve(vector<int>&arr, int k) {
+  int n = arr.size();
+  if (n == 0) {
+    return 0;
   }
 
-  public:
-  int getMaxValue(vector<int>arr, int k, vector<int>weights) {
-    return solve(0, arr.size() -1, arr, weights, k, ind);
+
+  int slowPtr = -1, fastPtr = 0;
+  int currNumZeros =  0; 
+
+  int ans = 0;
+
+  while (fastPtr < n) {
+
+    int currVal = arr[fastPtr];
+    currNumZeros += (currVal == 0 ? 1 : 0);
+    
+    if (currNumZeros > k) {
+      while (slowPtr+1 < n and arr[slowPtr+1] != 0) {
+        ++slowPtr;
+      }
+      ++slowPtr;
+      -- currNumZeros;
+    }
+
+    int result = fastPtr - slowPtr;
+    ans = max(ans, result);
+
+    ++ fastPtr;
   }
+  return ans;
 }
+
+
+int main () {
+
+  vector<int>arr = vector<int>({1,1,1,0,0,0,1,1,1,1,0});
+
+  int ans = solve(arr, 2);
+  cout << ans << endl;
+  return 0;
+}
+
+/*
+
+
+*/
